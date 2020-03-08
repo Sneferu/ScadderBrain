@@ -149,6 +149,35 @@ module spur_interior_spoked(inner_radius,
   }
 }
 
+/* Swiss Interior ---------------------------------------------------------- */
+
+// Note that this module is named after the cheese, not the watch gears
+module spur_interior_swiss(inner_radius,
+                           outer_radius,
+                           thickness,
+                           symmetry_group){
+  angle = 360/symmetry_group;
+  nthickness = thickness + 1; //Ensure no overlap
+  difference(){
+    solid_ring(inner_radius=inner_radius,
+             outer_radius=outer_radius,
+             thickness=thickness,
+             $fn=$fn);
+    replicate_circular(count=symmetry_group, vec=[0,0,1]){
+      r_center_1 = inner_radius/2 + outer_radius/2;
+      r_cutout_1 = r_center_1 * sin(angle/2) * 2/3;
+      r_center_2 = inner_radius/4 + 3*outer_radius/4;
+      r_cutout_2 = r_center_2 * sin(angle/6) * 2/3;
+      union(){
+        translate([r_center_1, 0, 0])
+          cylinder(r=r_cutout_1, h=nthickness, center=true, $fn=DEFAULT_FN);
+        rotate(a=angle/2, v=[0, 0, 1]) translate([r_center_2, 0, 0])
+          cylinder(r=r_cutout_2, h=nthickness, center=true, $fn=DEFAULT_FN);
+      }
+    }
+  }
+}
+
 /* Solid Neck -------------------------------------------------------------- */
 
 module spur_neck_solid(bore,
@@ -168,7 +197,8 @@ translate([0,0,-40]){
 }
 translate([0,0,-20]) color("red"){
   spur_neck_solid(bore=1.5, outer_radius=2.5, thickness=3);
-  spur_interior_solid(inner_radius=2, outer_radius=19, thickness=0.5);
+  spur_interior_swiss(inner_radius=2, outer_radius=19, thickness=0.5,
+                      symmetry_group=6);
   spur_ring_solid(inner_radius=18, outer_radius=21, thickness=2);
   spur_teeth_involute(mod=1, number=50, thickness=1.5, pressure_angle=18,                  twist_angle=-10, inner_radius=20);
 }
