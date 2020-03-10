@@ -141,12 +141,50 @@ module spur_interior_spoked(inner_radius,
                             outer_radius,
                             thickness,
                             width,
-                            number){
+                            number,
+                            profile="rectangle",
+                            angle=0){
   replicate_circular(count=number,
                      vec=[0, 0, 1]){
-    translate([(inner_radius + outer_radius)/2, 0, 0])
-      cube([outer_radius - inner_radius, width, thickness], center=true);
+    translate([inner_radius, 0, 0])
+      spoke(length=outer_radius - inner_radius,
+            angle=angle){
+        if (profile == "rectangle"){
+          spoke_profile_rectangle([width, thickness]);
+        } else if (profile == "cross") {
+          spoke_profile_cross([width, thickness]);
+        }
+      }
   }
+}
+
+// Generates a spoke using its first child as the profile
+module spoke(length, angle){
+    
+  if (angle == 0){
+    translate([length/2, 0, 0]) rotate(a=90, v=[0, 1, 0]){
+      linear_extrude(height=length, convexity=10, center=true){
+        rotate(a=-90) children();
+      }    
+    }
+  }else{
+    radius = length/(2 * sin(angle/2));
+    rotate(a=-angle) translate([-radius, 0, 0])
+      rotate_extrude(angle=angle, convexity=10, $fn=DEFAULT_FN){
+        translate([radius, 0, 0]) children();
+      }
+  }
+}
+
+module spoke_profile_rectangle(vec){
+  square(vec, center=true);   
+}
+
+module spoke_profile_cross(vec){
+  // TODO
+  bar_thickness = (vec[0] + vec[1]) / 8;
+  square([vec[0], bar_thickness], center=true);
+  square([bar_thickness, vec[1]], center=true);
 }
 
 /* Swiss Interior ---------------------------------------------------------- */
@@ -203,10 +241,11 @@ translate([0,0,-20]) color("red"){
   spur_teeth_involute(mod=1, number=50, thickness=1.5, pressure_angle=18,                  twist_angle=-10, inner_radius=20);
 }
 translate([0,0,0]) color("blue"){
-  spur_neck_solid(bore=1, outer_radius=1.5, thickness=1.5);
-  spur_interior_solid(inner_radius=1.2, outer_radius=12, thickness=1);
-  spur_ring_solid(inner_radius=12, outer_radius=14.5, thickness=1.5);
-  spur_teeth_involute(mod=0.3, number=110, thickness=1, pressure_angle=25,                  twist_angle=20, inner_radius=14);
+  spur_neck_solid(bore=1, outer_radius=2, thickness=1.5);
+  spur_interior_spoked(inner_radius=1.2, outer_radius=16, thickness=1.5,
+                       width=2, number=4, profile="cross", angle=70);
+  spur_ring_solid(inner_radius=14.5, outer_radius=16, thickness=1.5);
+  spur_teeth_involute(mod=0.3, number=110, thickness=1, pressure_angle=25,                  twist_angle=20, inner_radius=15);
 }
 translate([0,0,20]) color("green"){
   spur_neck_solid(bore=1, outer_radius=1.5, thickness=1.3);
