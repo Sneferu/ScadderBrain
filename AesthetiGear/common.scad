@@ -9,14 +9,14 @@ PI=3.14159;
 module replicate_circular(count, vec){
   angle = 360/count;
   for(i = [0 : count - 1]){
-    rotate(a=angle*i, v=vec) children(0); 
+    rotate(a=angle*i, v=vec) children(); 
   }
 }
 
 // Repeat something 'count' times along a vector
 module replicate_linear(count, vec){
   for(i = [0 : count - 1]){
-    translate(vec) children(0);
+    translate(vec) children();
   }   
 }
 
