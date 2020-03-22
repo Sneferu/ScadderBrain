@@ -5,27 +5,9 @@ include <common.scad>
 /* Spur-Specific Helpers ---------------------------------------------------- */
 
 TOOTH_GRANULARITY = 20;
-DEFAULT_FN = 50;
 
 // Generate involution of angle in rads
 function involution(angle) = tan(rtod(angle)) - angle;
-
-// Get pitch from mod
-function pitch(mod) = PI*mod;
-
-// Get mod from pitch
-function mod(pitch) = pitch/PI;
-
-// General solid ring
-module solid_ring(inner_radius,
-                  outer_radius,
-                  thickness,
-                  $fn=DEFAULT_FN){
-  difference(){
-    cylinder(r=outer_radius, h=thickness, center=true, $fn=$fn);
-    cylinder(r=inner_radius, h=thickness+1, center=true, $fn=$fn);
-  }
-}
 
 /* Involute Teeth ---------------------------------------------------------- */
 
