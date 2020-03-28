@@ -1,6 +1,6 @@
 /* Spur Gears */
 
-include <common.scad>
+include <../common/common.scad>
 
 /* Spur-Specific Helpers ---------------------------------------------------- */
 
