@@ -1,0 +1,1 @@
+This project (and all subprojects) are Copyright (C) 2020 Mackenzie Scanlan and are available under the WTFPL license (look it up for terms and conditions, as I will not replicate it here).
