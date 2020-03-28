@@ -86,7 +86,7 @@ module screw_thread_metric(pitch,
                            point_length=0){
 
   length_eff = length - point_length;
-  twist = 360 * length_eff/pitch;
+  twist = -360 * length_eff/pitch;
   translate([0, 0, -length_eff/2])
     linear_extrude(height=length_eff,
                    center=true,
